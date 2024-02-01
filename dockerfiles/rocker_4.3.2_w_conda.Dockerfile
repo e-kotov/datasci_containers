@@ -1,5 +1,6 @@
 FROM rocker/geospatial:4.3.2
 
+
 # based on this tutorial https://jupyterhub-image.guide/rocker.html
 # Install conda here, to match what repo2docker does
 ENV CONDA_DIR=/srv/conda
@@ -21,8 +22,7 @@ RUN apt -y update
 
 RUN apt -y upgrade
 
-RUN apt -y install micro nano htop glances ncdu tree libzmq3-dev --no-install-recommends p7zip-full p7zip-rar gnupg
-
+RUN apt -y install micro nano htop glances ncdu mc lfm ranger tree libzmq3-dev p7zip-full p7zip-rar gnupg osmium-tool --no-install-recommends
 
 # Install a specific version of Miniforge in ${CONDA_DIR}
 # Pick latest version from https://github.com/conda-forge/miniforge/releases
@@ -30,7 +30,7 @@ ENV MINIFORGE_VERSION=23.3.1-1
 RUN echo "Installing Miniforge..." \
     # && curl -sSL "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge-${MINIFORGE_VERSION}-Linux-$(uname -m).sh" > installer.sh \
     # && curl -sSL "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge-${MINIFORGE_VERSION}-Linux-x86_64.sh" > installer.sh \
-    && curl -sSL "https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Miniforge3-23.3.1-1-Linux-x86_64.sh" > installer.sh \
+    && curl -sSL "https://github.com/conda-forge/miniforge/releases/download/23.11.0-0/Miniforge3-23.11.0-0-Linux-x86_64.sh" > installer.sh \
     && /bin/bash installer.sh -u -b -p ${CONDA_DIR} \
     && rm installer.sh \
     && conda clean -afy \
@@ -66,6 +66,8 @@ RUN strip /usr/local/lib/R/site-library/*/libs/*.so
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 
 ENV PATH="/root/.cargo/bin:${PATH}"
+
+RUN cargo install csvlens
 
 RUN git clone https://github.com/dabreegster/odjitter && cd odjitter && cargo build --release && cp ./target/release/odjitter /usr/local/bin/ && cd .. && rm -rf odjitter
 
