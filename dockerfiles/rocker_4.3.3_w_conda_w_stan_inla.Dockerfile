@@ -1,4 +1,4 @@
-FROM rocker/geospatial:4.3.2
+FROM rocker/geospatial:4.3.3
 
 
 # based on this tutorial https://jupyterhub-image.guide/rocker.html
@@ -53,6 +53,8 @@ RUN R -e "IRkernel::installspec(prefix='${CONDA_DIR}')"
 # RUN R --quiet -e 'remotes::install_github("IRkernel/IRkernel@*release")'
 # RUN R --quiet -e 'IRkernel::installspec(user = FALSE)'
 
+
+RUN install2.r --error --skipmissing -n "$NCPUS" duckdb arrow
 
 # install R-INLA
 RUN R -e 'install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)'
