@@ -66,7 +66,18 @@ export APPTAINERENV_R_LIBS_USER=${RLIBS}
 export HOSTNAME=$(hostname -s)
 
 ### check ports from 9100 to 9200
-readonly SSHPORT=${SSHPORT:-$(python -c 'exec("""import socket\ndef next_free_port( port=9100, max_port=9200 ):\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    while port <= max_port:\n        try:\n            sock.bind(("", port))\n            sock.close()\n            return(port)\n        except:\n            port += 1\n    raise IOError("no free ports")\nprint(next_free_port())""")')}
+readonly SSHPORT=${SSHPORT:-$(python -c 'exec("""import socket
+def next_free_port( port=9100, max_port=9200 ):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    while port <= max_port:
+        try:
+            sock.bind(("", port))
+            sock.close()
+            return(port)
+        except:
+            port += 1
+    raise IOError("no free ports")
+print(next_free_port())""")')}
 
 
 cat 1>&2 <<END
