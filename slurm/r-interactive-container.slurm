@@ -4,12 +4,13 @@
 #SBATCH --time=10:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=30G
+#SBATCH --mem=32G
 #SBATCH -C scratch
 #SBATCH --output=/user/egor.kotov/%u/logs/interactive/r-int-c.job.%j.txt
 
 
-CONTAINER_IMAGE=${CONTAINER_IMAGE:-${HOME}/jupyterhub-gwdg/jupyter.sif}
+# CONTAINER_IMAGE=${CONTAINER_IMAGE:-${HOME}/jupyterhub-gwdg/jupyter.sif}
+CONTAINER_IMAGE=${CONTAINER_IMAGE:-/scratch-scc/users/u14190/containers/datasci_containers_4.5-osm.sif}
 
 # example use to run with custom image
 # cd ~
@@ -48,7 +49,7 @@ mkdir -p ${TMPDIR}/run ${TMPDIR}/tmp
 echo $PATH
 export APPTAINER_PATH=${PATH}
 # create run and tmp workdirs
-export APPTAINER_BIND="${TMPDIR}/run:/run,${TMPDIR}/tmp:/tmp,/scratch-scc:/scratch-scc,/var/run/munge,/run/munge,/usr/lib64/libmunge.so.2,/usr/lib64/libmunge.so.2.0.0,/usr/local/slurm,/opt/slurm"
+export APPTAINER_BIND="${TMPDIR}/run:/run,${TMPDIR}/tmp:/tmp,/scratch-scc:/scratch-scc,/var/run/munge,/run/munge,/usr/lib64/libmunge.so.2,/usr/lib64/libmunge.so.2.0.0,/usr/local/slurm,/opt/slurm,/mnt/ceph-ssd/workspaces/ws/scc_mrdf_all"
 # export APPTAINER_BIND="${TMPDIR}/run:/run,${TMPDIR}/tmp:/tmp,/scratch-scc:/scratch-scc,/usr/local/slurm:/usr/local/slurm,/opt/slurm/el8/24.11.1/install/lib/slurm:/opt/slurm/el8/24.11.1/install/lib/slurm"
 
 # export APPTAINER_LD_LIBRARY_PATH=/opt/slurm/el8/24.11.1/install/lib/slurm:/usr/local/slurm/current/install/lib:$LD_LIBRARY_PATH
@@ -66,18 +67,7 @@ export APPTAINERENV_R_LIBS_USER=${RLIBS}
 export HOSTNAME=$(hostname -s)
 
 ### check ports from 9100 to 9200
-readonly SSHPORT=${SSHPORT:-$(python -c 'exec("""import socket
-def next_free_port( port=9100, max_port=9200 ):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    while port <= max_port:
-        try:
-            sock.bind(("", port))
-            sock.close()
-            return(port)
-        except:
-            port += 1
-    raise IOError("no free ports")
-print(next_free_port())""")')}
+readonly SSHPORT=${SSHPORT:-$(python -c 'exec("""import socket\ndef next_free_port( port=9100, max_port=9200 ):\n    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    while port <= max_port:\n        try:\n            sock.bind(("", port))\n            sock.close()\n            return(port)\n        except:\n            port += 1\n    raise IOError("no free ports")\nprint(next_free_port())""")')}
 
 
 cat 1>&2 <<END
