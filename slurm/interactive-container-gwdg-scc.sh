@@ -1,12 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=dc
 #SBATCH --partition=jupyter
-#SBATCH --time=01:00:00
+#SBATCH --time=10:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=32G
-#SBATCH --output=%u/logs/interactive/vscode-dev.%j.txt
-#SBATCH --nodelist=agq[001-012]
+#SBATCH --output=/user/egor.kotov/%u/logs/interactive/dc.job.%j.txt
 
 # Container image path
 CONTAINER_IMAGE=/user/egor.kotov/u14190/containers/rbinder-451-sshd.sif
@@ -14,6 +13,22 @@ CONTAINER_IMAGE=/user/egor.kotov/u14190/containers/rbinder-451-sshd.sif
 # Load apptainer
 module purge
 module load apptainer
+
+export XDG_RUNTIME_DIR=""
+export ftp_proxy=http://www-cache.gwdg.de:3128
+export http_proxy=http://www-cache.gwdg.de:3128
+export https_proxy=http://www-cache.gwdg.de:3128
+export NO_PROXY=*.hlrn.de,jupyter.hpc.gwdg.de,jupyter.usr.hpc.gwdg.de,localhost,127.0.0.1
+# Make sure these land inside the container as well
+export APPTAINERENV_LC_ALL=en_US.UTF-8
+export APPTAINERENV_http_proxy="$http_proxy"
+export APPTAINERENV_https_proxy="$https_proxy"
+export APPTAINERENV_ftp_proxy="$ftp_proxy"
+export APPTAINERENV_NO_PROXY="$NO_PROXY"
+
+export OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK"
+export MKL_NUM_THREADS="$SLURM_CPUS_PER_TASK"
+
 
 # Get hostname
 HOSTNAME=$(hostname -s)
@@ -28,13 +43,22 @@ PASSWD_FILE="/tmp/passwd.u14190.$$"
 getent passwd u14190 | sed 's|/bin/zsh|/bin/bash|' > ${PASSWD_FILE}
 getent passwd root >> ${PASSWD_FILE}
 
-# Start apptainer instance with custom passwd
+unset WRITABLETMP
+BIND="/home,/local,/mnt,/mnt/vast-orga,/opt/misc,/opt/slurm,/projects,/user_datastore_map,/pools,/run/munge,/scratch,/sw/viz/jupyterhub-nhr,/user,/usr/lib64/libmunge.so.2,/usr/lib64/libmunge.so.2.0.0,/usr/local/slurm,/var/run/dbus,/var/run/munge"
+WRITABLETMP="--writable-tmpfs"
+
+for fs in /sw /scratch /scratch-emmy /scratch-grete /scratch-scc /scratch1 /usr/users /home /mnt/vast-* /mnt/lustre-* /mnt/ceph-* ; do
+    [[ -d "$fs" ]] && BIND+=",$fs"
+done
+
+
 apptainer instance start \
-  --bind ${TMPDIR}:/tmp,/home,/user,/local,/mnt,/scratch \
+  --bind $BIND \
   --bind $HOME/.vscode-server:$HOME/.vscode-server \
   --bind $HOME/.positron-server:$HOME/.positron-server \
   --bind $HOME/.zed_server:$HOME/.zed_server \
   --bind ${PASSWD_FILE}:/etc/passwd \
+  $WRITABLETMP \
   ${CONTAINER_IMAGE} \
   devcontainer
 
