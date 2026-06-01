@@ -1,4 +1,4 @@
-FROM ghcr.io/rocker-org/geospatial:latest AS base
+FROM ghcr.io/rocker-org/geospatial:latest
 
 LABEL org.opencontainers.image.source="https://github.com/e-kotov/datasci_containers"
 
@@ -71,10 +71,7 @@ RUN adduser --system --uid 450 --gid 450 --home /var/lib/slurm slurm
 # see https://docs.hpc.gwdg.de/software_stacks/list_of_modules/apptainer/index.html
 
 
-# Final Stage: Create the combined container
-FROM base AS final
-
-# Install any additional dependencies for running OSRM on Ubuntu 22, liblua for slurm,
+# Install any additional dependencies for liblua for slurm,
 # and system dependencies for Playwright/Chromium (Ubuntu 24.04)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
