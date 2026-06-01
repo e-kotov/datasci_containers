@@ -27,6 +27,8 @@ RUN apt-get -y update && apt-get -y install \
     nmon \
     openssh-server \
     openssh-client \
+    # ADD DROPBEAR - lightweight SSH server that works without root
+    dropbear \
     dialog \
     osmium-tool \
     p7zip-full \
