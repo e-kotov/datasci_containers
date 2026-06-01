@@ -71,42 +71,8 @@ RUN adduser --system --uid 450 --gid 450 --home /var/lib/slurm slurm
 # see https://docs.hpc.gwdg.de/software_stacks/list_of_modules/apptainer/index.html
 
 
-# Stage 2: Use prebuilt OSRM container to get the important binaries
-FROM ghcr.io/project-osrm/osrm-backend:v5.27.1 AS osrm
-
 # Final Stage: Create the combined container
 FROM base AS final
-
-# Copy only the necessary OSRM components
-# COPY --from=osrm /usr/local/bin/osrm-extract /usr/local/bin/osrm-extract
-# COPY --from=osrm /usr/local/bin/osrm-contract /usr/local/bin/osrm-contract
-# COPY --from=osrm /usr/local/bin/osrm-partition /usr/local/bin/osrm-partition
-# COPY --from=osrm /usr/local/bin/osrm-customize /usr/local/bin/osrm-customize
-# COPY --from=osrm /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed
-
-# Optionally, copy the OSRM profiles (if you need to use default profiles)
-COPY --from=osrm /opt /opt
-COPY --from=osrm /usr/local /usr/local
-# COPY --from=osrm /usr/lib/lua /usr/local
-
-
-# Copy the Boost shared libraries that are needed
-# Copy the specific Boost libraries required by OSRM
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_filesystem.so.1.74.0 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_program_options.so.1.74.0 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_thread.so.1.74.0 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_iostreams.so.1.74.0 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_date_time.so.1.74.0 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_regex.so.1.74.0 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_chrono.so.1.74.0 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/libboost_system.so.1.74.0 /usr/local/lib/
-
-# (Optional) Copy other dependencies that may be needed for OSRM to run properly
-COPY --from=osrm /usr/local/lib/libtbb.so.12 /usr/local/lib/
-COPY --from=osrm /usr/lib/*-linux-gnu/liblua5.4.so.0 /usr/local/lib/
-
-# Update library path to ensure copied libraries can be found
-RUN ldconfig /usr/local/lib
 
 # Install any additional dependencies for running OSRM on Ubuntu 22, liblua for slurm,
 # and system dependencies for Playwright/Chromium (Ubuntu 24.04)
