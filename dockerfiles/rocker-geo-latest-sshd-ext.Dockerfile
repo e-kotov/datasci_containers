@@ -92,18 +92,18 @@ COPY --from=osrm /usr/local /usr/local
 
 # Copy the Boost shared libraries that are needed
 # Copy the specific Boost libraries required by OSRM
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.74.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_program_options.so.1.74.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.74.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_iostreams.so.1.74.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_date_time.so.1.74.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.74.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_chrono.so.1.74.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/libboost_system.so.1.74.0 /usr/lib/x86_64-linux-gnu/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_filesystem.so.1.74.0 /usr/local/lib/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_program_options.so.1.74.0 /usr/local/lib/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_thread.so.1.74.0 /usr/local/lib/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_iostreams.so.1.74.0 /usr/local/lib/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_date_time.so.1.74.0 /usr/local/lib/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_regex.so.1.74.0 /usr/local/lib/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_chrono.so.1.74.0 /usr/local/lib/
+COPY --from=osrm /usr/lib/*-linux-gnu/libboost_system.so.1.74.0 /usr/local/lib/
 
 # (Optional) Copy other dependencies that may be needed for OSRM to run properly
 COPY --from=osrm /usr/local/lib/libtbb.so.12 /usr/local/lib/
-COPY --from=osrm /usr/lib/x86_64-linux-gnu/liblua5.4.so.0 /usr/lib/x86_64-linux-gnu/
+COPY --from=osrm /usr/lib/*-linux-gnu/liblua5.4.so.0 /usr/local/lib/
 
 # Update library path to ensure copied libraries can be found
 RUN ldconfig /usr/local/lib
