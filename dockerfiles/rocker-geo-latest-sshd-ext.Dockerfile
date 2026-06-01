@@ -111,4 +111,4 @@ RUN apt-get update && \
         libxtst6 && \
     rm -rf /var/lib/apt/lists/*
 
-# USER your_user_name
+USER rstudio
