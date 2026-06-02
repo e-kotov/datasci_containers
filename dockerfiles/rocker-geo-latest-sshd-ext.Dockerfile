@@ -110,20 +110,20 @@ RUN apt-get update && \
         pandoc \
         xz-utils \
         zlib1g-dev \
-        # Playwright / Chromium system dependencies (Ubuntu generic names)
-        libasound2 \
-        libatk1.0-0 \
-        libatk-bridge2.0-0 \
+        # Playwright / Chromium system dependencies (Ubuntu 24.04 names)
+        libasound2t64 \
+        libatk1.0-0t64 \
+        libatk-bridge2.0-0t64 \
         libcairo2 \
-        libcups2 \
+        libcups2t64 \
         libdbus-1-3 \
         libexpat1 \
         libfontconfig1 \
         libgbm1 \
         libgcc-s1 \
         libgdk-pixbuf-2.0-0 \
-        libglib2.0-0 \
-        libgtk-3-0 \
+        libglib2.0-0t64 \
+        libgtk-3-0t64 \
         libnspr4 \
         libnss3 \
         libpango-1.0-0 \
@@ -145,7 +145,7 @@ RUN apt-get update && \
         libxtst6 \
         # other utilities
         libbz2-1.0 \
-        liblua5.3 && \
+        liblua5.3-0 && \
     rm -rf /var/lib/apt/lists/*
 
 USER rstudio
