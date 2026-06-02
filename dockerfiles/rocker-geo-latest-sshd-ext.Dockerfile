@@ -73,25 +73,57 @@ RUN adduser --system --uid 450 --gid 450 --home /var/lib/slurm slurm
 # see https://docs.hpc.gwdg.de/software_stacks/list_of_modules/apptainer/index.html
 
 
-# Install any additional dependencies for liblua for slurm,
-# and system dependencies for Playwright/Chromium (Ubuntu 24.04)
+# Install system dependencies for Playwright/Chromium and R packages (renv/PPM)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        libexpat1 \
-        libbz2-1.0 \
-        liblua5.3 \
-        libasound2t64 \
-        libatk1.0-0t64 \
-        libatk-bridge2.0-0t64 \
+        # build tools
+        cmake \
+        make \
+        g++ \
+        # core system deps
+        ca-certificates \
+        curl \
+        wget \
+        git \
+        # R / Geospatial / PPM dependencies
+        default-jdk \
+        gdal-bin \
+        libabsl-dev \
+        libcairo2-dev \
+        libcurl4-openssl-dev \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libgdal-dev \
+        libgeos-dev \
+        libglpk-dev \
+        libicu-dev \
+        libnode-dev \
+        libpng-dev \
+        libproj-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libudunits2-dev \
+        libuv1-dev \
+        libx11-dev \
+        libxml2-dev \
+        libzstd-dev \
+        pandoc \
+        xz-utils \
+        zlib1g-dev \
+        # Playwright / Chromium system dependencies (Ubuntu generic names)
+        libasound2 \
+        libatk1.0-0 \
+        libatk-bridge2.0-0 \
         libcairo2 \
-        libcups2t64 \
+        libcups2 \
         libdbus-1-3 \
+        libexpat1 \
         libfontconfig1 \
         libgbm1 \
         libgcc-s1 \
         libgdk-pixbuf-2.0-0 \
-        libglib2.0-0t64 \
-        libgtk-3-0t64 \
+        libglib2.0-0 \
+        libgtk-3-0 \
         libnspr4 \
         libnss3 \
         libpango-1.0-0 \
@@ -110,7 +142,10 @@ RUN apt-get update && \
         libxrandr2 \
         libxrender1 \
         libxshmfence1 \
-        libxtst6 && \
+        libxtst6 \
+        # other utilities
+        libbz2-1.0 \
+        liblua5.3 && \
     rm -rf /var/lib/apt/lists/*
 
 USER rstudio
